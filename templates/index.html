@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../static/styles.css">
+    <title>Vishleshan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header_container">
+        <div class="buttons">
+            <div class="login_button" style="margin-top: -20px;">
+                <a href="{{url_for('login')}}"><button>Login</button></a>
+            </div>
+            <div class="signup_button" style="margin-top: -20px;">
+                <a href="{{url_for('signup')}}"><button>Signup</button></a>
+            </div>
+            <div class="about_button" style="margin-top: -20px;">
+                <a href="{{url_for('about')}}"><button>About</button></a>
+            </div>
+            <div class="contact_button" style="margin-top: -20px;">
+                <a href="{{url_for('contact')}}"><button>Contact</button></a>
+            </div>
+    
+            <div class="faq_button">
+                <div class="dropdown">
+                    <button class="dropbtn">FAQ</button>
+                    <div class="dropdown-content">
+                        <div class="question-dropdown">
+                            <button class="dropbtn">What is Project Vishleshan?</button>
+                            <div class="dropdown-content">
+                                <p>Project Vishleshan is a cutting-edge initiative aimed at providing local shopkeepers with a powerful sales analysis and visualization platform.
+                                    It leverages advanced data analytics and visualization techniques to offer actionable insights, 
+                                    enabling businesses to make informed decisions, optimize inventory management, and enhance overall efficiency. 
+                                    Whether you're a small boutique or a neighborhood grocery store, 
+                                    Vishleshan is designed to elevate your business through the lens of data.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="question-dropdown">
+                            <button class="dropbtn">How data science is used in Vishleshan?</button>
+                            <div class="dropdown-content">
+                                <p>Vishleshan employs cutting-edge data science methodologies to meticulously analyze sales data for local shopkeepers. 
+                                    Through advanced algorithms, the platform identifies patterns, forecasts future sales, and generates insightful visualizations. 
+                                    This data-driven approach empowers shopkeepers with strategic insights, 
+                                    facilitating informed decisions on inventory management, pricing strategies, and targeted marketing efforts.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="question-dropdown">
+                            <button class="dropbtn">Who built Vishleshan?</button>
+                            <div class="dropdown-content">
+                                <p>Vishleshan was collaboratively built by a team of four developers: Devesh Attri,Shivang Srivastava,Priyanshu Pathak, and Yash. 
+                                    Each member brought their unique skills and expertise to create a comprehensive solution for empowering local retailers through advanced sales analysis and visualization tools. 
+                                    The diverse strengths of the team contributed to the successful development of Vishleshan, ensuring it meets the needs of businesses in the retail industry.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="logo">
+            <img src="../static/Vishleshan Logo.png" alt="logo image">
+        </div>
+    </div>
+
+    <div class="center_content">
+        <div class="left_content">
+            <div class="title">
+                <div class="typewriter-container" style="text-align: left;">
+                    <h1 class="typewriter" id="welcome-text"></h1>
+                    <h1 class="typewriter" id="app-text" style="color: white;"></h1>
+                </div>
+                <p class="paragraph-typewriter" id="lorem-ipsum" style="font-family:Verdana, Geneva, Tahoma, sans-serif ;"></p>
+            </div>
+        </div>
+
+        <div class="container">
+            <form action="/generate_plot" method="post">
+                <label for="category">Select Category:</label> 
+                <select name="category" id="category">
+                    {% for category in categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="item">Select Item:</label>
+                <select name="item" id="item">
+                    <option value="" disabled selected>Select Item</option>
+                    <option>holo</option>
+                </select>
+                <label for="month">Select Month:</label>
+                <select name="month" id="month">
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+
+                <label for="chart_type">Select Chart Type:</label>
+                <select name="chart_type" id="chart_type">
+                    <option value="bar">Bar Chart</option>
+                    <option value="pie">Pie Chart</option>
+
+                    <option value="line">Line Chart</option>
+                    <option value="stacked_bar">Stacked Bar Chart</option>
+
+                    <option value="monthly_line">Monthly Line Chart</option>
+                </select>
+
+                <input type="submit" value="Generate Visualization">
+            </form>
+
+            {% if plot_data %}
+                <div class="plot-container">
+                    <img src="data:image/png;base64,{{ plot_data }}" alt="Sales Visualization">
+                </div>
+
+                <div class="additional-insights">
+                    <h4>Insights:</h4>
+                    <ul>
+                        {% for insight in insights %}
+                            <li>{{ insight }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <img src="../static/bottom_image.png" alt="Bottom Left Image" class="bottom-left-image">
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the elements
+            const welcomeText = document.getElementById('welcome-text');
+            const appText = document.getElementById('app-text');
+            const loremIpsum = document.getElementById('lorem-ipsum');
+
+            // Set the text content for typing
+            const welcomeTextContent = "Welcome To ";
+            const appTextContent = "Vishleshan App";
+            const loremIpsumContent = "Welcome to Vishleshan, where we're dedicated to empowering local retailers through advanced sales analysis and visualization tools. In a rapidly changing market, data-driven decisions are key to success. Join us on a journey to enhance your business operations, optimize inventory, and stay competitive with tailored data insights.";
+
+            // Typing speed in milliseconds
+            const typingSpeed = 100;
+
+            // Typing function
+            function typeText(element, textContent) {
+                let i = 0;
+                const typingInterval = setInterval(function () {
+                    if (i < textContent.length) {
+                        element.textContent += textContent.charAt(i);
+                        i++;
+                    } else {
+                        clearInterval(typingInterval);
+                    }
+                }, typingSpeed);
+            }
+
+            // Trigger typing animations
+            typeText(welcomeText, welcomeTextContent);
+            setTimeout(function () {
+                typeText(appText, appTextContent);
+            }, welcomeTextContent.length * typingSpeed + 1000); // Wait for a moment after typing "Welcome To"
+            setTimeout(function () {
+                typeText(loremIpsum, loremIpsumContent);
+            }, (welcomeTextContent.length + appTextContent.length) * typingSpeed + 2000); // Wait for a moment after typing "Vishleshan App"
+
+            const categoryDropdown = document.getElementById('category');
+            const itemDropdown = document.getElementById('item');
+
+            categoryDropdown.addEventListener('change', function () {
+                const selectedCategory = this.value;
+                updateItemDropdown(selectedCategory);
+            });
+
+            function updateItemDropdown(selectedCategory) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/get_items',
+                    data: { 'category': selectedCategory },
+                    success: function (data) {
+                        itemDropdown.innerHTML = "<option value='' disabled selected>Select Item</option>";
+                        data.items.forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item;
+                            option.text = item;
+                            itemDropdown.add(option);
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
